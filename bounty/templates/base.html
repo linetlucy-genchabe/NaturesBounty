@@ -29,6 +29,28 @@
 
   {% endblock %}
 
+  <script>
+    let user = "{{request.user}}"
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+</script>
+
 </head>
 
 <body>
@@ -64,12 +86,20 @@
 
     <!-- Copyright -->
     <div class="footer-copyright text-center py-3">© 2022 Copyright.
-      <a href="https://github.com/linetlucy-genchabe"> linetlucy genchabe</a>
+      <a href="https://github.com/linetlucy-genchabe"> Natures Bounty Juice Bar</a>
     </div>
     <!-- Copyright -->
   
   </footer>
   <!-- Footer -->
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js">
+</script>
+<script src="{% static 'script.js' %}"></script>
+{% csrf_token %}
+<script>
+    csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
 
 </body>
 
