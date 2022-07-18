@@ -1,0 +1,51 @@
+{% extends 'base.html' %} {%load bootstrap5%} {% load static %}{% block title %} Sign Up Page {% endblock %} {% block content %}
+
+<div class="container mt-5 mb-3 ">
+    <div class="row gradient-custom shadow">
+        <div class="col-md-6">
+            <img src="/static/images/bounty3.jpg" alt="" style="height: 63%;width:92%; margin-top:20% ;">
+        </div>
+        
+        <div class="col-md-5 " style="margin-left: 1%;">
+        <h1 style="color: rgb(16, 65, 16);font-family: Arial, Helvetica, sans-serif;">Register new Account</h1>
+        <form action="/register/" method="POST">
+            {% csrf_token %}
+            <div class="container mt-5">
+                <div class="col-6 offset 3 mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <label for="first_nam" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <label for="password1" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password1" name="password1">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <label for="password2" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="password2" name="password2">
+                </div>
+                <div class="col-6 offset 3 mb-3">
+                    <button type="submit" style="background-color: rgb(16, 65, 16);color: white;font-weight: bold;" class="btn  flex-parent jc-center">Register</button>
+                </div>
+
+            </div>
+        </form>
+        <p>Already have an account? <a class=' font-weight-bold' href="/accounts/login">Login</a></p>
+        </div>
+        
+    </div>
+</div>
+
+
+{% endblock %}
