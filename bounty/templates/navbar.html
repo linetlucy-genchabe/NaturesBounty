@@ -2,7 +2,7 @@
 <nav class="pl-5 pr-5 navbar navbar-expand-lg  bg-white shadow sticky-top" >
 
     <!-- Navbar brand -->
-    <a class="navbar-brand font-weight-bold" href="{% url 'index' %}" style="color: black;">NUTRAFIT</a>
+    <a class="navbar-brand font-weight-bold" href="{% url 'index' %}" style="color: black;">NUTURES BOUNTY </a>
   
     <!-- Collapse button -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
@@ -22,7 +22,7 @@
           
         </li>
         {% if user.is_authenticated %}
-        <ul>
+        <!-- <ul>
           {% for category in category_results%}
           <ul>
             <li class="dropdown list-unstyled text-black">
@@ -38,18 +38,58 @@
             </li>
           </ul>
           {% endfor %}
-        </ul>
+        </ul> -->
+        <!-- <li class="nav-item">
+          <a class="nav-link font-weight-bold" href="{%url 'new-post'%}" style="color: black;"> NEW POST  </a>
+        </li> -->
         <li class="nav-item">
-          <a class="nav-link font-weight-bold" href="{%url 'new-post'%}" style="color: black;"> NEW POST </a>
+          <a class="nav-link font-weight-bold" href="{%url 'contact'%}" style="color: black;"> CUSTOMER CARE </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link font-weight-bold" href="{%url 'contact'%}" style="color: black;"> PROFESSIONALS </a>
+        <li class="nav-item me-3 me-lg-1 font-weight-bold" >
+            <a class="nav-link" href="{%url 'cart'%}" style="color: rgb(150, 26, 78);">   
+            <div class="cart-item-count" id="cart">Cart
+                <h6>{{cart.cartquantity}}</h6>
+            </div></span></a>
         </li>
+
+        <li class="nav-item me-3 me-lg-1 font-weight-bold" >
+            <a class="nav-link" href="{%url 'checkout'%}" style="color: rgb(148, 31, 80);">
+                Checkout
+            </a>
+        </li>
+
         
         
         
         {% endif %}
        
+        </ul>
+        <ul class="navbar-nav flex-row d-none d-md-flex">
+            <!-- <li class="nav-item me-3 me-lg-1">
+                <a class="nav-link" href="{%url 'index'%}">
+                    Shop
+                </a>
+            </li> -->
+
+            <!-- <li class="nav-item me-3 me-lg-1 font-weight-bold" >
+                <a class="nav-link" href="{%url 'cart'%}" style="color: rgb(150, 26, 78);">   
+                <div class="cart-item-count" id="cart">Cart
+                    <h6>{{cart.cartquantity}}</h6>
+                </div></span></a>
+            </li>
+
+            <li class="nav-item me-3 me-lg-1 font-weight-bold" >
+                <a class="nav-link" href="{%url 'checkout'%}" style="color: rgb(148, 31, 80);">
+                    Checkout
+                </a>
+            </li> -->
+
+            <!-- <li class="nav-item me-3 me-lg-1">
+                <a class="nav-link" href="#">
+                    <span><i class="fas fa-users fa-lg"></i></span>
+                    <span class="badge rounded-pill badge-notification bg-danger">2</span>
+                </a>
+            </li> -->
         </ul>
        
       <!-- Links -->
@@ -65,6 +105,7 @@
               {% if user.is_authenticated %}
               
               <ul>
+               
                 <li class="dropdown list-unstyled text-black">
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -73,9 +114,9 @@
                     <li>
                         <a class="dropdown-item" href="{%url 'profile'%}">Profile</a>
                       </li>
-                    <li>
+                    <!-- <li>
                       <a class="dropdown-item" href="/accounts/password/change">Change Password</a>
-                    </li>
+                    </li> -->
                     <li>
                       <a class="dropdown-item" href="/logout">Logout</a>
                     </li>
@@ -85,7 +126,7 @@
               {% else %}
               <li class="list-unstyled">
                   <a class='btn  font-weight-bold' style="background-color:rgb(16, 65, 16);color: white; " href="/accounts/login">Login</a>
-                  <a class='btn  font-weight-bold' style="background-color:rgb(16, 65, 16);color: white; " href="/accounts/register">Register</a>
+                  <!-- <a class='btn  font-weight-bold' style="background-color:rgb(16, 65, 16);color: white; " href="/register">Register</a> -->
               </li>
 
               {% endif %}
