@@ -35,6 +35,12 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+cloudinary.config( 
+  cloud_name = "linetlucy", 
+  api_key = "773681528851629", 
+  api_secret = "DxoyJ-LUjqaUiwMsemprmwx1aBk" 
+)
+
 # Application definition
 
 INSTALLED_APPS = [
