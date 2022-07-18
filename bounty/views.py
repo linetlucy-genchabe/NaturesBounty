@@ -12,6 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .email import send_welcome_email
+from django.http import JsonResponse
+import json
 # Create your views here.
 
 
@@ -20,24 +22,126 @@ from .email import send_welcome_email
 # Create your views here.
 
 def index(request):
-    # posts = Posts.objects.all()
+    posts = Posts.objects.all()
 
-    # if request.method == 'POST':
-    #     letterform = NewsLetterForm(request.POST)
-    #     if letterform.is_valid():
-    #         name = letterform.cleaned_data['your_name']
-    #         email = letterform.cleaned_data['email']
+    if request.user.is_authenticated:
+        customer=request.user
+        '''
+        Creating a cart for a logged in user. check if cart exists, create 
+        '''
+        cart, created = Cart.objects.get_or_create(owner=customer, completed=False)
+        '''
+        Getting the cartitems(child) from the cart(parent)
+        '''
+        cartitems=cart.cartitems_set.all()
+    else:
+        cart=[]
+        cartitems=[]
+        cart={'cartquantity':0}
+    products=Posts.objects.all()
+    ctx={
+        'products':products, 
+        'cartitems':cartitems,
+        'cart': cart,
+    }
 
-    #         recipient = NewsLetterRecipients(name = name,email =email)
-    #         recipient.save()
-    #         send_welcome_email(name,email)
+    if request.method == 'POST':
+        letterform = NewsLetterForm(request.POST)
+        if letterform.is_valid():
+            name = letterform.cleaned_data['your_name']
+            email = letterform.cleaned_data['email']
 
-    #         HttpResponseRedirect('index')
-    #         #.................
-    # else:
-    #         letterform = NewsLetterForm()
+            recipient = NewsLetterRecipients(name = name,email =email)
+            recipient.save()
+            send_welcome_email(name,email)
+
+            HttpResponseRedirect('index')
+            #.................
+    else:
+            letterform = NewsLetterForm()
     
-    return render(request, 'index.html')
+    return render(request, 'index.html', {"posts":posts})
+
+
+def cart(request):
+    '''
+    check if user is authenticated, so they can create a new cart
+    '''
+    if request.user.is_authenticated:
+        customer=request.user
+        '''
+        Creating a cart for a logged in user. check if cart exists, create 
+        '''
+        cart, created = Cart.objects.get_or_create(owner=customer, completed=False)
+        '''
+        Getting the cartitems(child) from the cart(parent)
+        '''
+        cartitems=cart.cartitems_set.all()
+    else:
+        cart=[]
+        cartitems=[]
+        cart={'cartquantity':0}
+    ctx={
+        'cart':cart,
+        'cartitems':cartitems
+    }
+    return render(request, 'cart.html', ctx)
+
+def updateCart(request):
+    data = json.loads(request.body)
+    product_id = data['product_id']
+    action = data['action']
+    if request.user.is_authenticated:
+        customer =request.user
+        product = Posts.objects.get(product_id=product_id)
+        cart, created =Cart.objects.get_or_create(owner=customer, completed=False)
+        cartitems, created =Cartitems.objects.get_or_create(product=product, cart=cart)
+
+        if action == 'add':
+            cartitems.quantity += 1
+            cartitems.save()
+
+        msg={
+            'quantity':cart.cartquantity,
+            'created':created
+        }
+
+    return JsonResponse(msg, safe=False)
+
+def updateQuantity(request):
+    data=json.loads(request.body)
+    inputval= int(data['in_val'])
+    product_id=data['p_id']
+    if request.user.is_authenticated:
+        customer =request.user
+        product = Posts.objects.get(product_id=product_id)
+        cart, created =Cart.objects.get_or_create(owner=customer, completed=False)
+        cartitems, created =Cartitems.objects.get_or_create(product=product, cart=cart)
+
+        cartitems.quantity=inputval
+        cartitems.save()
+
+        msg={
+            'subtotal':cartitems.subtotal,
+            'grandtotal':cart.grandtotal,
+            'quantity':cart.cartquantity,
+            'created':created
+        }
+
+    return JsonResponse(msg, safe=False)
+
+def checkout(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        cart, created = Cart.objects.get_or_create(owner=customer, completed = False)
+        cartitems = cart.cartitems_set.all()
+    else:
+        cart = []
+        cartitems = []
+        cart = {'cartquantity': 0}
+    context = {'cart': cart, 'cartitems': cartitems}
+    return render(request, 'checkout.html', context)
+
 
 
 
@@ -94,7 +198,7 @@ def user_profiles(request):
     current_user = request.user
     
     profile = Profile.objects.get(user=request.user)
-    # profile = request.user.profile
+    profile = request.user.profile
     
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES,instance=profile)   
@@ -110,4 +214,136 @@ def user_profiles(request):
 
 
     return render(request, 'registration/profile.html', {"form":form})
+
+
+@login_required(login_url='/accounts/login/')
+def search_posts(request):
+    if 'keyword' in request.GET and request.GET["keyword"]:
+        search_term = request.GET.get("keyword")
+        searched_projects = Posts.search_posts(search_term)
+        message = f"{search_term}"
+
+        return render(request, 'search.html', {"message":message,"businesses": searched_projects})
+
+    else:
+        message = "You haven't searched for any term"
+        return render(request, 'search.html', {"message": message})
+
+
+@login_required(login_url='/accounts/login/')
+def new_post(request):
+    current_user = request.user
+    profile = request.user.profile
+   
+
+    if request.method == 'POST':
+        form = NewPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.Author = current_user
+            post.author_profile = profile
+
+            post.save()
+        return redirect('index')
+
+    else:
+        form = NewPostForm()
+    return render(request, 'new-post.html', {"form": form})
+
+
+def get_category(request,category):
+    category_results = Category.objects.all()
+    
+    category_result = Posts.objects.filter(post_category__name = category)
+    return render(request,'index.html',{'my_posts':category_result,'category_results':category_results,})
+
+@login_required(login_url='login')
+def single_post(request,post_id):
+    post = Posts.objects.get(id=post_id)
+    current_user = request.user
+    profile = request.user.profile
+    user =User.objects.get(username=current_user.username)
+    comments = Comment.objects.filter(post_id=post_id)
+    likes_count = Likes.objects.filter(post_id=post_id).count()
+    liked = False
+
+    try:
+
+        like = Likes.objects.filter(post_id=post_id, user_id=user.id)
+
+        if like:
+            liked = True
+        else:
+            liked = False
+
+    except Likes.DoesNotExist:
+        print('')
+    cxt={
+        'post':post,
+        'comments':comments,
+        'likes_count':likes_count,
+        'liked':liked,
+        'profile':profile,
+    }
+    return render(request,'single_post.html',cxt)
+
+
+
+def comment(request, post_id):
+
+    current_user = request.user
+    
+    profile = request.user.profile
+    user = User.objects.get(username=current_user.username)
+    post = Posts.objects.get(id=post_id)
+    form = CommentForm()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+
+            # form.save()
+            comment = form.save(commit=False)
+
+            comment.user_id = user.id
+            comment.post_id = post.id
+            comment.Author = current_user
+            comment.author_profile = profile
+            comment.save()
+
+            return redirect('/')
+        else:
+            form = CommentForm()
+
+    ctx = {
+        'form': form,
+        'post': post
+    }
+
+    return render(request, 'comment.html', ctx)
+
+
+def like_post(request, post_id):
+
+    current_user = request.user
+    user = User.objects.get(username=current_user.username)
+    posts = Posts.objects.get(id=post_id)
+
+    try:
+
+        like = Likes.objects.filter(post_id=post_id, user_id=user.id)
+
+        if like:
+            like.delete()
+        else:
+            Likes.objects.create(
+                user_id=user,
+                post_id=posts.id
+            )
+
+    except Likes.DoesNotExist:
+        print('')
+
+    return redirect('single_post', post_id=posts.id)
+
 
