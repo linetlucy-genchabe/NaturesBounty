@@ -3,11 +3,11 @@
 {% block content %}
 
 <!-- Quantity and Price Section -->
-<div class='container' style="width: 70%; margin-top: 20px;" >
+<div class='container' style="width: 70%; margin-top: 30px;" >
     <table class="table table-light table-hover">
         <thead>
             <tr>
-                <th scope="col"><a href="{% url 'checkout'%}">Shop More</th>
+                <th scope="col"><a href="{% url 'index'%}" style="color: orange;"><b>SHOP MORE</b></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -17,18 +17,18 @@
 
             <tr>
                 <th scope="row">
-                    <h3><strong>Items: {{cart.quantity}} </strong></h3>
+                    <h3><strong>Items: {{cart.cartquantity}} </strong></h3>
                 </th>
                 <td></td>
                 <td>
-                    <h3><strong>Total: KES0</strong></h3>
+                    <h3><strong>Total: KES {{cart.grandtotal | floatformat:2}}</strong></h3>
                 </td>
                 <!-- <td></td> -->
 
                 <td>
                     <!-- Checkout url was here-->
-                    <a href="{% url 'checkout'%}">
-                     Checkout
+                    <a href="{% url 'checkout'%}" style="color: orange;">
+                     <b>CHECKOUT</b>
                     </a></td>
             </tr>
 
@@ -90,7 +90,7 @@
                 </td>
                 <td></td>
                 <td id='total'>
-                    <h3><strong>KES{{cart.grandtotal | floatformat:2}}</strong></h3>
+                    <h3><b>TOTAL:</b><strong>KES  {{cart.grandtotal | floatformat:2}}</strong></h3>
                 </td>
             </tr>
 
