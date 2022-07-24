@@ -63,6 +63,7 @@ def index(request):
     return render(request, 'index.html', {"posts":posts})
 
 
+@login_required(login_url='/accounts/login/')
 def cart(request):
     '''
     check if user is authenticated, so they can create a new cart
