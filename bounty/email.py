@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 
 def send_welcome_email(name,receiver):
     # Creating message subject and sender
-    subject = 'Welcome to Nutrafit'
+    subject = 'Welcome to Natures Bounty Juice Bar'
     sender = 'linetlucy21@gmail.com'
 
     #passing in the context vairables
