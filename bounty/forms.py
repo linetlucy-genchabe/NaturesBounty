@@ -26,10 +26,10 @@ class NewPostForm(forms.ModelForm):
           'post': forms.Textarea(attrs={'rows':2, 'cols':10,}),
         }
 
-class CommentForm(forms.ModelForm):
-     class Meta:
-        model = Comment
-        fields=['content']
+# class CommentForm(forms.ModelForm):
+#      class Meta:
+#         model = Comment
+#         fields=['content']
 
 class NewsLetterForm(forms.Form):
     your_name = forms.CharField(label='First Name',max_length=30)
